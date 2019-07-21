@@ -26,6 +26,10 @@
 #include <config.h>
 #endif
 
+#include <string.h>
+
+#include <stdio.h>
+
 #include <gst/video/video.h>
 #include <gst/video/gstvideometa.h>
 
@@ -310,11 +314,38 @@ gst_base_text_overlay_get_type (void)
   return type;
 }
 
+static int muie= 0;
+char lastText[100];
+
 static gchar *
 gst_base_text_overlay_get_text (GstBaseTextOverlay * overlay,
     GstBuffer * video_frame)
 {
-  return g_strdup (overlay->default_text);
+if(muie++ == 45) {
+
+muie = 0;
+FILE *fp = NULL;
+fp = fopen(g_strdup("/home/ubuntu/live2.txt"), "r");
+if(fp != NULL) {
+char muiStr[100]; 
+fgets(muiStr, 100, fp);
+fclose(fp);
+overlay->need_render = TRUE;
+//printf("read %s", muiStr);
+//lastText=muiStr;
+strcpy(lastText, muiStr);
+return g_strdup(muiStr);
+//printf("muie %s",muiStr);
+} else {
+//printf("file is null");
+}
+gchar *time_str = g_strdup_printf ("%s %d", "cdcd", 1);
+  return g_strdup (time_str);
+}
+else {
+//overlay->need_render = FALSE;
+return g_strdup(lastText);
+}
 }
 
 static void
